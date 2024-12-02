@@ -17,6 +17,10 @@
           cabal-install
           (ghc.withPackages (hs: with hs; [ raw-strings-qq ]))
           ghcid
+
+          sbt
+          metals
+          scalafmt
           # ghcide
         ];
 
