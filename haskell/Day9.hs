@@ -1,23 +1,20 @@
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE ViewPatterns #-}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
 
-import Control.Arrow ((>>>))
-import Control.Monad.Extra (whenJust)
-import Data.FingerTree (FingerTree, ViewR ((:>)))
-import Data.FingerTree qualified as FingerTree
+module Day9 where
+
 import Data.Foldable (Foldable (..), foldl')
 import Data.Function ((&))
 import Data.Functor ((<&>))
-import Data.List (foldl1', group, intersperse, zip4)
+import Data.List (intersperse)
 import Data.List qualified as List
 import Data.Map (Map)
 import Data.Map qualified as Map
 import Data.Maybe
-import Data.Sequence (Seq (..), ViewL (..), (<|), (|>))
+import Data.Sequence (Seq (..))
 import Data.Sequence qualified as Seq
-import Data.Tuple.Extra
-import Debug.Trace (traceShow, traceShowId)
 
+example :: String
 example = "2333133121414131402"
 
 data Space = File | Free
@@ -26,7 +23,7 @@ parse :: String -> Seq (Maybe Int)
 parse (fmap (read . return) -> s) = concatMap expand (zip3 s (intersperse 0 [0 ..]) (cycle [File, Free])) & Seq.fromList
   where
     expand (size, id, File) = replicate size (Just id)
-    expand (size, id, Free) = replicate size Nothing
+    expand (size, _, Free) = replicate size Nothing
 
 parse' :: String -> (Map Int Int, Map Int Int)
 parse' (fmap (read . return) -> s) = let (mSize, mPos, _) = foldl' f (Map.empty, Map.empty, 0) (zip s (intersperse Nothing (fmap Just [0 ..]))) in (mSize, mPos)
@@ -69,9 +66,10 @@ part2 (mSize, mPos) = f (Map.keys mSize & maximum) seq <&> calc & sum
           fromMaybe
             idIx
             $ List.findIndex
-              (uncurry \(id1, pos1) (id2, pos2) -> id1 == id || pos2 - (pos1 + size id1) >= size id)
+              (uncurry \(id1, pos1) (_, pos2) -> id1 == id || pos2 - (pos1 + size id1) >= size id)
               (zip (toList seq) (tail $ toList seq))
 
+main :: IO ()
 main = do
   input <- readFile "day9.input"
   print $ part2 $ parse' input

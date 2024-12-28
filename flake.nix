@@ -8,24 +8,26 @@
   outputs =
     { self, nixpkgs }:
     let
-      pkgs = import nixpkgs { system = "x86_64-linux"; };
+      pkgs = import nixpkgs {
+        system = "x86_64-linux";
+        overlays = [ ];
+      };
     in
     {
       devShells."x86_64-linux".default = pkgs.mkShell {
         buildInputs = with pkgs; [
-          haskell-language-server
+          haskell-language-server # .override { supportedGhcVersions = [ "96" ]; })
           cabal-install
-          (ghc.withPackages (hs: with hs; [ raw-strings-qq ]))
+          ghc
           ghcid
 
           sbt
           metals
           scalafmt
-          # ghcide
-        ];
 
-        # shellHook = ''
-        # '';
+          blas
+          lapack
+        ];
       };
     };
 }

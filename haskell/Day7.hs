@@ -1,12 +1,13 @@
-{-# LANGUAGE QuasiQuotes #-}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
-import Data.Bits qualified as Bits
+module Day7 where
+
 import Data.Bool (bool)
 import Data.Functor ((<&>))
 import Data.List (foldl')
-import Debug.Trace (traceShowId)
 import Text.RawString.QQ
 
+example :: String
 example =
   [r|190: 10 19
 3267: 81 40 27
@@ -40,8 +41,10 @@ part12 ops ((s : is) : iss) = bool 0 s (s `elem` (eval is <$> perms (size - 1)))
 concatNumbers :: Int -> Int -> Int
 concatNumbers x y = x * 10 ^ floor (logBase 10 (fromIntegral y) + 1) + y
 
+part1ops :: [Int -> Int -> Int]
 part1ops = [(*), (+)]
 
+part2ops :: [Int -> Int -> Int]
 part2ops = concatNumbers : part1ops
 
 -- $> part12 part1ops  (parse example)

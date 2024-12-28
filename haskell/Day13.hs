@@ -1,16 +1,17 @@
-{-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE ViewPatterns #-}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+{-# OPTIONS_GHC -Wno-incomplete-uni-patterns #-}
 
-import Data.Bool (bool)
+module Day13 where
+
 import Data.Function ((&))
 import Data.Functor ((<&>))
 import Data.List.Extra (chunksOf)
-import Data.Matrix qualified as Matrix
 import Data.Maybe (catMaybes, mapMaybe)
 import Numeric.LinearAlgebra
 import Text.RawString.QQ
 import Text.Regex.TDFA
 
+example :: String
 example =
   [r|Button A: X+94, Y+34
 Button B: X+22, Y+67
@@ -35,6 +36,7 @@ parse str = getAllTextMatches (str =~ "[0-9]+") <&> read & chunksOf 6
 isRoundInteger :: Double -> Bool
 isRoundInteger x = x == fromIntegral (round x)
 
+roundDouble :: Double -> Double
 roundDouble = fromIntegral . round
 
 columns :: [Double] -> [Matrix Double]
@@ -49,6 +51,7 @@ whenRank2 mat prize = if scale a (mat ¿ [0]) + scale b (mat ¿ [1]) == prize th
 
 -- $> whenRank2 (va ||| vb) prize
 
+toMaybe :: Bool -> a -> Maybe a
 toMaybe b x = if b then Just x else Nothing
 
 -- rank 1 case is not relevant to the puzzle input but i have written it anyways for exercise
@@ -65,10 +68,12 @@ whenRank1 mat prize = if null sol then Nothing else Just $ round $ minimum sol
 
 -- $> whenRank1 (va ||| vb) prize
 
+calculateCost :: [Matrix Double] -> Maybe Int
 calculateCost [va, vb, prize]
   | rank (va ||| vb) == 2 = whenRank2 (va ||| vb) prize
   | otherwise = whenRank1 (va ||| vb) prize
 
+part1 :: [[Double]] -> Int
 part1 xss = mapMaybe (calculateCost . columns) xss & sum
 
 -- $> part1 (parse example)
@@ -77,8 +82,10 @@ part1 xss = mapMaybe (calculateCost . columns) xss & sum
 
 -- $> part1 (parse input)
 
+fixPrice :: [Matrix Double] -> [Matrix Double]
 fixPrice [ma, mb, mprize] = [ma, mb, add (col [10000000000000, 10000000000000]) mprize]
 
+part2 :: [[Double]] -> Int
 part2 xss = mapMaybe (calculateCost . fixPrice . columns) xss & sum
 
 -- $> part2 (parse input)

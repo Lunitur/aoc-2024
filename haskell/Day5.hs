@@ -1,17 +1,16 @@
-{-# LANGUAGE QuasiQuotes #-}
+module Day5 where
 
 import Control.Monad (void)
-import Data.Either (fromRight)
-import Data.Function (on, (&))
+import Data.Function ((&))
 import Data.Functor ((<&>))
+import Data.Functor.Identity
 import Data.List qualified as List
-import Data.Map (Map)
-import Data.Map qualified as Map
 import Data.Set (Set)
 import Data.Set qualified as Set
 import Text.Parsec
 import Text.RawString.QQ
 
+example :: String
 example =
   [r|47|53
 97|13
@@ -49,15 +48,18 @@ inputParser = do
   updates <- many1 update
   return (Set.fromList orders, updates)
 
+number :: ParsecT String u Identity Int
 number = do
   i <- many1 digit
   return (read i :: Int)
 
+update :: ParsecT String u Identity [Int]
 update = do
   pages <- sepBy1 number (char ',')
   void endOfLine <|> eof
   return pages
 
+order :: ParsecT String u Identity (Int, Int)
 order = do
   i1 <- number
   char '|'
@@ -65,6 +67,7 @@ order = do
   endOfLine
   return (i1, i2)
 
+part1 :: (Set (Int, Int), [[Int]]) -> Int
 part1 (os, us) = correctUpdates <&> (\xs -> xs !! (length xs `div` 2)) & sum
   where
     correctUpdates = filter (isCorrect os) us
@@ -72,9 +75,10 @@ part1 (os, us) = correctUpdates <&> (\xs -> xs !! (length xs `div` 2)) & sum
 isCorrect :: Set (Int, Int) -> [Int] -> Bool
 isCorrect os u = and [(h, j) `Set.member` os || (j, h) `Set.notMember` os | i@(h : _) <- List.tails u, j <- tail i]
 
-part2 (os, us) = (incorrectUpdates <&> (\xs -> xs !! (length xs `div` 2)) . order) & sum
+part2 :: (Set (Int, Int), [[Int]]) -> Int
+part2 (os, us) = (incorrectUpdates <&> (\xs -> xs !! (length xs `div` 2)) . order') & sum
   where
-    order = List.sortBy cmp
+    order' = List.sortBy cmp
     incorrectUpdates = filter (not . isCorrect os) us
     cmp x y
       | (x, y) `Set.member` os = LT

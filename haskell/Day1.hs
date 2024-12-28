@@ -1,5 +1,4 @@
-{-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE ViewPatterns #-}
+module Day1 where
 
 import Data.Bifunctor (bimap)
 import Data.Function ((&))
