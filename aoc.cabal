@@ -55,17 +55,15 @@ extra-doc-files:    CHANGELOG.md
 -- extra-source-files:
 
 common warnings
-    ghc-options: -Wall
+    ghc-options: -Wall -fplugin=MonadicBang
 
 library
     -- Import common warning flags.
-    import:           warnings
+    -- import:           warnings
 
     -- Modules exported by the library.
-    -- exposed-modules:  MyLib
-
-    -- Modules included in this library but not exported.
-    other-modules:
+    exposed-modules: 
+      Main,
       Day1,
       Day3,
       Day5,
@@ -75,11 +73,24 @@ library
       Day13,  
       Day15
 
+    -- Modules included in this library but not exported.
+    -- other-modules:
+    --   Day1,
+    --   Day3,
+    --   Day5,
+    --   Day7,
+    --   Day9,
+    --   Day11,
+    --   Day13,  
+    --   Day15
+
     -- LANGUAGE extensions used by modules in this package.
     default-extensions:
       ViewPatterns,
       QuasiQuotes,
-      BlockArguments
+      BlockArguments,
+      LambdaCase,
+      TemplateHaskell
 
     -- Other library packages from which modules are imported.
     build-depends:    
@@ -90,7 +101,12 @@ library
       hmatrix,
       extra,
       heftia-effects,
-      parsec
+      heftia,
+      parsec,
+      mtl,
+      microlens-platform,
+      relude,
+      monadic-bang
 
 
     -- Directories containing source files.

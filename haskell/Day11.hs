@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-incomplete-uni-patterns #-}
-
 module Day11 where
 
 import Data.Function ((&))
@@ -31,12 +29,6 @@ groupGroupedBlink blink = sort blink & group <&> \rs@((r, m) : _) -> (r, m * len
 
 part :: (Ord a, Num a, Read a, Show a) => Int -> [a] -> Int
 part n rocks = blinks rocks & (!! n) <&> snd & sum
-
--- $> part 25 (parse example)
-
--- $> part 25 (parse input)
-
--- $> part 75 (parse input)
 
 main :: IO ()
 main = print (part 75 (parse input))

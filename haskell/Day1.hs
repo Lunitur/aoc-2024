@@ -5,11 +5,10 @@ import Data.Function ((&))
 import Data.Functor ((<&>))
 import Data.List (sort)
 import Data.List qualified as List
-import Data.Map (Map)
 import Data.Map qualified as Map
-import Debug.Trace (traceShowId)
 import Text.RawString.QQ
 
+example :: ([Int], [Int])
 example =
   parse
     [r|3   4
