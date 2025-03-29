@@ -59,8 +59,8 @@ def runExample = part1(7, 11, parse(example))
 
 def runPart1 = part1(103, 101, parse(input))
 
-extension [A](l: List[A])
-  def group: List[List[A]] = l match
+extension (l: List[Char])
+  def group: List[List[Char]] = l match
     case List() => List()
     case xs =>
       val (as, bs) = xs span { xs.head == _ }

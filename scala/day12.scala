@@ -1,9 +1,6 @@
 package day12
 
 import scala.io.Source
-import cats.syntax.all._
-import cats.data._
-import cats._
 import scala.collection.immutable.ArraySeq
 
 val example = """RRRRIICCFF
@@ -129,5 +126,5 @@ def part2(m: RegionMap) =
     .mapValues(_.map(_._2).sum)
     .toMap
 
-  (for i <- 1 until regCounter
+  (for i <- 1 `until` regCounter
   yield totalCorners(i) * areas(i)).sum
